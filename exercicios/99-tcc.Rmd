@@ -1,0 +1,47 @@
+---
+title: "TCC"
+author: "Athos Petri Damiani"
+date: "8/29/2020"
+output: html_document
+---
+
+## ENUNCIADO: 
+
+Elabore um relatório estatístico com gráficos, tabelas e testes estatísticos do banco de dados `mtcars`.
+Questão: quais características do carro explica sua a eficiência (milhas por galão de combustível)?
+A coluna `mpg` é a coluna com as milhas por galão.
+
+
+
+### Guia de análise:
+
+0) Introdução
+  - Definição do problema
+  - Descrição básica da origem e da coleta dos dados
+  - Objetivo da análise
+  - Hipótese do estudo
+
+1) Gráficos e tabelas descritivos: 
+  - Sumários das variáveis (univariadas); 
+  - Dados faltantes? Podemos imputar valores?
+  - Gráficos das relações entre a resposta com as variáveis explicativas (bivariadas);
+
+2) Modelagem:
+  - Apresentar a fórmula da regressão linear;
+  - Ajustar a regressão;
+  - Apresentar a tabela de parãmetros e seus respectivos testes (summary);
+  - Discutir os testes de hipóteses apresentados pelo summary;
+  - Interpretação e quantificação dos efeitos;
+
+3) Diagnóstico do modelo:
+  - Existem pontos influentes? Eles são pontos de alavanca?
+  - Os resíduos estão flutuando em volta do zero? Possui realmente relação linear?
+  - Alguma ação a ser tomada para melhorar o modelo? Alguma transformação ou exclusão de pontos são necessárias?
+  
+4) Conclusão e discussão:
+  - A associação entre as variáveis foram significantes? De que jeito?
+
+```{r setup, include=FALSE}
+
+```
+

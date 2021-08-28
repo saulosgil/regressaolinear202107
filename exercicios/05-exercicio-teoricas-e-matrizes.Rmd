@@ -1,0 +1,6 @@
+---
+title: "Exercício - Teoria e Matrizes"
+author: "Seu Nome Aqui"
+date: `r Sys.Date()`
+output: html_document
+---

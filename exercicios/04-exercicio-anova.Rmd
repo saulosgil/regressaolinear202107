@@ -1,0 +1,59 @@
+---
+title: "Exercício - ANOVA"
+author: "Seu Nome Aqui"
+date: `r Sys.Date()`
+output: html_document
+---
+
+## Pacotes
+
+```{r}
+library(tidyverse) # manipulacao de data.frame
+library(MASS) # dados Boston
+library(broom)
+```
+
+## Dados e problema
+
+O dataset `PlantGrowth` contém medidas de tamanhos de uma mesma espécie de planta que foram cultivadas em 3 diferentes condições: ctrl, tr1 e tr2. A condição ctrl corresponde a condição sem intervenção nenhuma. tr1 e tr2 foram condições especiais em que os cientistas estavam interessados em saber se influenciava no crescimento das plantas.
+
+```{r}
+PlantGrowth
+plot(weight ~ group, data = PlantGrowth)
+```
+
+```{r}
+PlantGrowth %>% 
+  group_by(group) %>%
+  summarise(
+    n = n(),
+    media_weight = mean(weight),
+    dp_weight = sd(weight)
+  )
+```
+
+
+## Ajuste do modelo
+
+Ajuste um modelo de regressão linear `lm()` para `weigth` explicado por `group`.
+
+```{r}
+
+```
+
+## Diagnóstico
+
+Rode `plot()` do seu modelo. O modelo está bem ajustado? Os resíduos estão em volta do zero? Existem outliers?
+
+```{r}
+
+```
+
+## Inferência
+
+Consulte `summary()`. Quais as conclusões do teste? 
+Compare as conclusões com a inspeção visual (tabela e gráfico acima). Está de acordo?
+
+## Conclusão 
+
+Os tratamentos tiveram efeito? Quanto?

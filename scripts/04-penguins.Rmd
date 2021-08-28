@@ -1,0 +1,222 @@
+---
+title: "penguins"
+author: "Athos"
+date: "05/09/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
+library(broom)
+library(readxl)
+library(janitor)
+library(MASS)
+library(lime)
+library(GGally)
+library(car)
+library(ISLR)
+library(tidymodels)
+library(tidyverse)
+library(skimr)
+```
+
+# Dados: palmerpenguins
+
+```{r}
+# install.packages("palmerpenguins")
+library(palmerpenguins)
+```
+
+```{r}
+skim(penguins)
+```
+
+```{r, echo = FALSE, warning=FALSE, message=FALSE, cache=TRUE}
+penguins %>% ggpairs()
+```
+
+# Relação entre species e island.
+
+```{r}
+penguins %>%
+  count(species, island) %>%
+  tidyr::complete(species, island, fill = list(species = 0, island = 0)) %>%
+  mutate(n = coalesce(n, 0L)) %>%
+  ggplot(aes(y = n, x = island)) +
+  geom_col() +
+  facet_grid(~species) 
+```
+
+
+
+# Variável resposta: Bill length
+
+```{r}
+library(patchwork)
+densidades <- penguins %>% 
+  select(bill_length_mm, where(is.factor)) %>%
+  pivot_longer(-bill_length_mm) %>%
+  ggplot(aes(x = bill_length_mm)) +
+  geom_density(aes(fill = value), alpha = 0.3) +
+  facet_wrap(~name)
+
+boxplots <- penguins %>% 
+  select(bill_length_mm, where(is.factor)) %>%
+  pivot_longer(-bill_length_mm) %>%
+  ggplot(aes(x = bill_length_mm)) +
+  geom_boxplot(aes(fill = value), alpha = 0.3, show.legend = FALSE) +
+  facet_wrap(~name)
+densidades/boxplots
+```
+
+```{r}
+p_species <- penguins %>% 
+  select(bill_length_mm, species, where(is.numeric)) %>%
+  pivot_longer(-c(bill_length_mm, species)) %>%
+  ggplot(aes(x = value, y = bill_length_mm, colour = species)) +
+  geom_point(alpha = 0.3, show.legend = FALSE) +
+  geom_smooth(method = "lm", show.legend = FALSE) +
+  facet_wrap(~name, scales = "free_x", ncol = 1)
+
+p_island <- penguins %>% 
+  select(bill_length_mm, island, where(is.numeric)) %>%
+  pivot_longer(-c(bill_length_mm, island)) %>%
+  ggplot(aes(x = value, y = bill_length_mm, colour = island)) +
+  geom_point(alpha = 0.3, show.legend = FALSE) +
+  geom_smooth(method = "lm", show.legend = FALSE) +
+  facet_wrap(~name, scales = "free_x", ncol = 1)
+
+p_sex <- penguins %>% 
+  select(bill_length_mm, sex, where(is.numeric)) %>%
+  pivot_longer(-c(bill_length_mm, sex)) %>%
+  ggplot(aes(x = value, y = bill_length_mm, colour = sex)) +
+  geom_point(alpha = 0.3, show.legend = FALSE) +
+  geom_smooth(method = "lm", show.legend = FALSE) +
+  facet_wrap(~name, scales = "free_x", ncol = 1)
+
+p_species+p_island+p_sex
+
+```
+
+# Modelagem
+
+## Passo 1) modelo full 
+
+```{r}
+mod1 <- lm(bill_length_mm ~ species*(. - island), data = penguins)
+
+summary(mod1)
+```
+
+```{r}
+vif(mod1)
+```
+
+
+```{r}
+plot(mod1)
+```
+
+## Passo 2) retira variáveis com vif alto (body_mass_g)
+
+```{r}
+
+mod2 <- lm(bill_length_mm ~ species*(. - island - body_mass_g), data = penguins)
+
+summary(mod2)
+```
+
+```{r}
+vif(mod2)
+```
+
+```{r}
+plot(mod2)
+```
+
+
+
+
+## Passo 3) retira variáveis com vif alto (year)
+
+```{r}
+
+mod3 <- lm(bill_length_mm ~ species*(. - island - body_mass_g - year), data = penguins)
+
+summary(mod3)
+```
+
+```{r}
+vif(mod3)
+```
+
+```{r}
+plot(mod3)
+```
+
+
+## Passo 4) vif alto (bill_depth_mm)
+
+```{r}
+
+mod4 <- lm(bill_length_mm ~ species*(. - island - body_mass_g - year - bill_depth_mm), data = penguins)
+
+summary(mod4)
+```
+
+```{r}
+vif(mod4)
+```
+
+```{r}
+plot(mod4)
+```
+
+## Passo 5) retirando potencial ponto de alavanca (294)
+
+```{r}
+
+mod5 <- lm(bill_length_mm ~ species*(. - island - body_mass_g - year - bill_depth_mm), data = penguins[-294,])
+
+summary(mod5)
+```
+
+
+```{r}
+plot(mod5)
+```
+
+
+## Passo 6) Elimina termos não significantes (species:sex)
+
+```{r}
+mod6 <- lm(bill_length_mm ~ species * flipper_length_mm + sex, data = penguins[-294,])
+
+summary(mod6)
+```
+
+```{r}
+mod6 %>%
+  augment() %>%
+  ggplot(aes(x = flipper_length_mm, colour = species, shape = sex)) +
+  geom_point(aes(y = bill_length_mm), show.legend = FALSE) +
+  geom_line(aes(y = .fitted), show.legend = FALSE)
+```
+
+
+```{r}
+lista_de_modelos <- list(
+  mod1,
+  mod2,
+  mod3,
+  mod4,
+  mod5,
+  mod6
+)
+modelsummary::modelsummary(lista_de_modelos)
+```
+
+```{r}
+modelsummary::modelplot(lista_de_modelos[-1])
+```
+

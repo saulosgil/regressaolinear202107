@@ -1,0 +1,132 @@
+---
+output: github_document
+---
+
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  echo = FALSE
+)
+
+library(magrittr)
+
+main_repo <- "main-regressao-linear"
+turma <- "202107-regressao-linear"
+num_aula <- 1
+```
+
+## Configuração: Criar um projeto do RStudio
+
+Faça um projeto do RStudio para usar durante todo o curso. O código abaixo irá fazer isso para você.
+
+```{r, eval=FALSE, echo = TRUE}
+install.packages("usethis")
+usethis::create_project("regressaolinear202107")
+```
+
+## Referências do curso
+
+[Clique aqui](https://github.com/curso-r/main-regressao-linear/raw/master/material_do_curso.zip) para baixar o material do curso.
+
+## Dúvidas
+
+Fora do horário de aula ou monitoria:
+
+- perguntas gerais sobre o curso deverão ser feitas no Classroom.
+
+- perguntas sobre R, principalmente as que envolverem código, deverão ser enviadas no [nosso fórum](https://discourse.curso-r.com/).
+
+## Slides
+
+```{r}
+knitr::kable(
+  tibble::tibble(
+    slide = CursoRutils:::list_github_files(main_repo, "slides/", "\\.html"),
+    link = paste0("https://curso-r.github.io/", main_repo, "/", slide)
+  ) %>% 
+    dplyr::filter(!stringr::str_detect(slide, "_files/"))
+)
+```
+
+
+## Scripts utilizados em aula
+
+### Parte teórica
+
+```{r}
+pasta <- "scripts/"
+knitr::kable(
+  tibble::tibble(
+    script = list.files(pasta, pattern = ".R"),
+    link = paste0("https://curso-r.github.io/", turma, "/", pasta, script)
+  ) %>% 
+    dplyr::slice(1)
+)
+```
+
+### Parte prática
+
+```{r}
+pasta <- "exercicios/"
+knitr::kable(
+  tibble::tibble(
+    script = list.files(pasta, pattern = ".R|.Rmd"),
+    link = paste0("https://curso-r.github.io/", turma, "/", pasta, script)
+  ) %>% 
+    dplyr::slice(1)
+)
+```
+
+## Material extra
+
+Referências extras comentadas (ou não) nas aulas.
+
+### Programação em R
+
+```{r}
+readxl::read_excel("referencias_extras.xlsx") %>%
+  dplyr::filter(aula <= num_aula, tema == "Regressão Linear - Inferência") %>% 
+  dplyr::mutate(link = glue::glue("[{desc}]({url})")) %>%
+  dplyr::select(-desc, -url, -tema) %>%
+  dplyr::arrange(num_aula) %>% 
+  knitr::kable(col.names = c("Aula", "Descrição"))
+```
+
+
+### Regressão Linear - Inferência
+
+```{r}
+readxl::read_excel("referencias_extras.xlsx") %>%
+  dplyr::filter(aula <= num_aula, tema == "Regressão Linear - Inferência") %>% 
+  dplyr::mutate(link = glue::glue("[{desc}]({url})")) %>%
+  dplyr::select(-desc, -url, -tema) %>%
+  dplyr::arrange(num_aula) %>% 
+  knitr::kable(col.names = c("Aula", "Descrição"))
+```
+
+### Regressão Linear - Predição
+
+```{r}
+readxl::read_excel("referencias_extras.xlsx") %>%
+  dplyr::filter(aula <= num_aula, tema == "Regressão Linear - Predição") %>% 
+  dplyr::mutate(link = glue::glue("[{desc}]({url})")) %>%
+  dplyr::select(-desc, -url, -tema) %>%
+  dplyr::arrange(num_aula) %>% 
+  knitr::kable(col.names = c("Aula", "Descrição"))
+```
+
+
+## Redes sociais da Curso-R
+
+Instagram: https://www.instagram.com/cursoo_r/
+
+Twitter: https://twitter.com/curso_r
+
+Instagram: https://www.youtube.com/c/CursoR6/featured
+
+Linkedin: https://www.linkedin.com/company/curso-r/
+
+Facebook: https://www.facebook.com/cursodeR
